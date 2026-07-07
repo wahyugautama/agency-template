@@ -1,0 +1,140 @@
+<div class="page-transition is-entering" aria-hidden="true">
+  <span class="page-transition__mark">FIELDWORK<sup>®</sup></span>
+</div>
+
+<script>
+  const overlay = document.querySelector<HTMLElement>('.page-transition');
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+  const FALLBACK_DELAY = 680;
+
+  if (overlay) {
+    let navigating = false;
+    let fallbackTimer = 0;
+
+    const setState = (state: 'is-entering' | 'is-leaving' | 'is-idle') => {
+      overlay.classList.remove('is-entering', 'is-leaving', 'is-idle');
+      overlay.classList.add(state);
+    };
+
+    const waitForAnimation = () => new Promise<void>((resolve) => {
+      let settled = false;
+      const finish = () => {
+        if (settled) return;
+        settled = true;
+        window.clearTimeout(fallbackTimer);
+        overlay.removeEventListener('animationend', onAnimationEnd);
+        resolve();
+      };
+      const onAnimationEnd = (event: AnimationEvent) => {
+        if (event.target === overlay) finish();
+      };
+      overlay.addEventListener('animationend', onAnimationEnd);
+      fallbackTimer = window.setTimeout(finish, FALLBACK_DELAY);
+    });
+
+    const playEntry = async () => {
+      setState('is-idle');
+      // Restarting the class in the next frame guarantees a fresh animation after bfcache restores.
+      await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
+      setState('is-entering');
+      await waitForAnimation();
+      setState('is-idle');
+    };
+
+    const isEligibleLink = (event: MouseEvent, link: HTMLAnchorElement) => {
+      if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return false;
+      if (link.target === '_blank' || link.hasAttribute('download')) return false;
+
+      const href = link.getAttribute('href');
+      if (!href || href.startsWith('#') || href.startsWith('mailto:') || href.startsWith('tel:')) return false;
+
+      const destination = new URL(link.href, window.location.href);
+      if (destination.origin !== window.location.origin) return false;
+      if (destination.href === window.location.href) return false;
+      return !(destination.pathname === window.location.pathname && destination.search === window.location.search && destination.hash);
+    };
+
+    const onClick = async (event: MouseEvent) => {
+      const target = event.target;
+      const link = target instanceof Element ? target.closest<HTMLAnchorElement>('a[href]') : null;
+      if (!link || navigating || reducedMotion.matches || !isEligibleLink(event, link)) return;
+
+      event.preventDefault();
+      navigating = true;
+      const destination = link.href;
+
+      try {
+        setState('is-leaving');
+        await waitForAnimation();
+      } catch (error) {
+        console.warn('Page transition failed; continuing navigation.', error);
+      } finally {
+        window.location.assign(destination);
+      }
+    };
+
+    const onPageShow = (event: PageTransitionEvent) => {
+      if (!event.persisted || reducedMotion.matches) return;
+      navigating = false;
+      playEntry().catch(() => setState('is-idle'));
+    };
+
+    const destroy = () => {
+      window.clearTimeout(fallbackTimer);
+      document.removeEventListener('click', onClick);
+      window.removeEventListener('pageshow', onPageShow);
+      window.removeEventListener('pagehide', onPageHide);
+    };
+
+    const onPageHide = (event: PageTransitionEvent) => {
+      if (!event.persisted) destroy();
+    };
+
+    if (reducedMotion.matches) {
+      setState('is-idle');
+    } else {
+      document.addEventListener('click', onClick);
+      window.addEventListener('pageshow', onPageShow);
+      window.addEventListener('pagehide', onPageHide);
+      waitForAnimation().then(() => setState('is-idle')).catch(() => setState('is-idle'));
+    }
+  }
+</script>
+
+<style>
+  .page-transition {
+    --transition-duration: 560ms;
+    --transition-entry-duration: 500ms;
+    --transition-easing: cubic-bezier(.77, 0, .18, 1);
+    --transition-color: #d9ff43;
+    --clip-hidden-top: inset(0 0 100% 0);
+    --clip-visible: inset(0 0 0 0);
+    --clip-hidden-bottom: inset(100% 0 0 0);
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+    color: #171714;
+    background: var(--transition-color);
+    pointer-events: none;
+    will-change: clip-path;
+  }
+  .page-transition.is-idle { visibility: hidden; clip-path: var(--clip-hidden-top); }
+  .page-transition.is-entering { animation: curtain-reveal var(--transition-entry-duration) var(--transition-easing) both; }
+  .page-transition.is-leaving { animation: curtain-cover var(--transition-duration) var(--transition-easing) both; }
+  .page-transition__mark { font-size: 18px; font-weight: 500; letter-spacing: -.04em; opacity: 0; animation: mark-in var(--transition-duration) ease both; }
+  .page-transition__mark sup { position: relative; top: -.6em; margin-left: 2px; font-size: 7px; }
+  .is-entering .page-transition__mark { animation-direction: reverse; }
+  .is-idle .page-transition__mark { animation: none; }
+
+  @keyframes curtain-cover { from { clip-path: var(--clip-hidden-bottom); } to { clip-path: var(--clip-visible); } }
+  @keyframes curtain-reveal { from { clip-path: var(--clip-visible); } to { clip-path: var(--clip-hidden-top); } }
+  @keyframes mark-in { 0%,35% { opacity: 0; transform: translateY(8px); } 75%,100% { opacity: 1; transform: translateY(0); } }
+
+  @media (prefers-reduced-motion: reduce) {
+    .page-transition,
+    .page-transition__mark { visibility: hidden; animation: none; clip-path: var(--clip-hidden-top); }
+  }
+</style>

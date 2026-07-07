@@ -1,0 +1,16 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+<BaseLayout title="Contact — Fieldwork">
+  <header class="contact-intro page-shell"><p class="eyebrow">Start a conversation</p><h1>Let’s make<br />something <em>matter.</em></h1></header>
+  <section class="contact-layout page-shell section-pad">
+    <div class="contact-details"><p>Tell us what you’re working on, where you want to go, and what’s getting in the way. We’ll get back to you within two working days.</p><dl><div><dt>Email</dt><dd><a href="mailto:hello@fieldwork.studio">hello@fieldwork.studio</a></dd></div><div><dt>Phone</dt><dd><a href="tel:+60322011886">+60 3 2201 1886</a></dd></div><div><dt>Studio</dt><dd>28 Jalan Riong<br />Bangsar, Kuala Lumpur</dd></div></dl></div>
+    <form class="contact-form" action="#" method="post">
+      <div class="field"><label for="name">Your name</label><input id="name" name="name" type="text" autocomplete="name" required /></div>
+      <div class="field"><label for="email">Email address</label><input id="email" name="email" type="email" autocomplete="email" required /></div>
+      <div class="form-row"><div class="field"><label for="type">Project type</label><select id="type" name="type"><option value="">Select one</option><option>Brand identity</option><option>Digital experience</option><option>Campaign</option><option>Something else</option></select></div><div class="field"><label for="budget">Budget range</label><select id="budget" name="budget"><option value="">Select one</option><option>US$20k–40k</option><option>US$40k–80k</option><option>US$80k+</option></select></div></div>
+      <div class="field"><label for="message">Tell us about the project</label><textarea id="message" name="message" rows="6" required></textarea></div>
+      <button type="submit">Send enquiry <span aria-hidden="true">↗</span></button>
+    </form>
+  </section>
+</BaseLayout>

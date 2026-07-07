@@ -1,0 +1,27 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import CTA from '../../components/CTA.astro';
+import { projects, type Project } from '../../data/projects';
+
+export function getStaticPaths() {
+  return projects.map((project) => ({ params: { slug: project.slug }, props: { project } }));
+}
+
+interface Props { project: Project; }
+const { project } = Astro.props;
+const index = projects.findIndex((item) => item.slug === project.slug);
+const nextProject = projects[(index + 1) % projects.length];
+---
+<BaseLayout title={`${project.title} — Fieldwork`} description={project.shortDescription}>
+  <article>
+    <header class="project-hero page-shell"><p class="eyebrow">{project.category} · {project.year}</p><h1>{project.title}</h1><p class="project-deck">{project.shortDescription}</p></header>
+    <figure class="project-cover"><img src={project.coverImage.src} alt={project.coverImage.alt} /></figure>
+    <section class="project-info page-shell section-pad">
+      <dl><div><dt>Client</dt><dd>{project.client}</dd></div><div><dt>Year</dt><dd>{project.year}</dd></div><div><dt>Services</dt><dd>{project.services.map((service) => <span>{service}</span>)}</dd></div></dl>
+      <div><p class="eyebrow">The project</p><p class="project-description">{project.fullDescription}</p></div>
+    </section>
+    <section class="project-gallery page-shell" aria-label={`${project.title} gallery`}>{project.galleryImages.map((image) => <figure><img src={image.src} alt={image.alt} loading="lazy" /></figure>)}</section>
+    <a class="next-project page-shell" href={`/work/${nextProject.slug}`}><span class="eyebrow">Next project</span><strong>{nextProject.title}</strong><span aria-hidden="true">→</span></a>
+  </article>
+  <CTA title="Make the next thing matter." />
+</BaseLayout>
