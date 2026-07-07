@@ -4,6 +4,7 @@
 
 <script>
   const overlay = document.querySelector<HTMLElement>('.page-transition');
+  const content = document.querySelector<HTMLElement>('#main-content');
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
   const FALLBACK_DELAY = 680;
 
@@ -14,6 +15,12 @@
     const setState = (state: 'is-entering' | 'is-leaving' | 'is-idle') => {
       overlay.classList.remove('is-entering', 'is-leaving', 'is-idle');
       overlay.classList.add(state);
+    };
+
+    const setContentState = (state: 'is-content-entering' | 'is-content-leaving' | 'is-content-idle') => {
+      if (!content) return;
+      content.classList.remove('is-content-entering', 'is-content-leaving', 'is-content-idle');
+      content.classList.add(state);
     };
 
     const waitForAnimation = () => new Promise<void>((resolve) => {
@@ -34,11 +41,14 @@
 
     const playEntry = async () => {
       setState('is-idle');
+      setContentState('is-content-idle');
       // Restarting the class in the next frame guarantees a fresh animation after bfcache restores.
       await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
       setState('is-entering');
+      setContentState('is-content-entering');
       await waitForAnimation();
       setState('is-idle');
+      setContentState('is-content-idle');
     };
 
     const isEligibleLink = (event: MouseEvent, link: HTMLAnchorElement) => {
@@ -65,6 +75,7 @@
 
       try {
         setState('is-leaving');
+        setContentState('is-content-leaving');
         await waitForAnimation();
       } catch (error) {
         console.warn('Page transition failed; continuing navigation.', error);
@@ -76,7 +87,10 @@
     const onPageShow = (event: PageTransitionEvent) => {
       if (!event.persisted || reducedMotion.matches) return;
       navigating = false;
-      playEntry().catch(() => setState('is-idle'));
+      playEntry().catch(() => {
+        setState('is-idle');
+        setContentState('is-content-idle');
+      });
     };
 
     const destroy = () => {
@@ -92,11 +106,19 @@
 
     if (reducedMotion.matches) {
       setState('is-idle');
+      setContentState('is-content-idle');
     } else {
+      setContentState('is-content-entering');
       document.addEventListener('click', onClick);
       window.addEventListener('pageshow', onPageShow);
       window.addEventListener('pagehide', onPageHide);
-      waitForAnimation().then(() => setState('is-idle')).catch(() => setState('is-idle'));
+      waitForAnimation().then(() => {
+        setState('is-idle');
+        setContentState('is-content-idle');
+      }).catch(() => {
+        setState('is-idle');
+        setContentState('is-content-idle');
+      });
     }
   }
 </script>
@@ -128,13 +150,26 @@
   .page-transition__mark sup { position: relative; top: -.6em; margin-left: 2px; font-size: 7px; }
   .is-entering .page-transition__mark { animation-direction: reverse; }
   .is-idle .page-transition__mark { animation: none; }
+  :global(.page-content.is-content-entering) {
+    animation: content-enter 560ms cubic-bezier(.22, 1, .36, 1) 70ms both;
+    will-change: transform, opacity;
+  }
+  :global(.page-content.is-content-leaving) {
+    animation: content-leave 400ms cubic-bezier(.4, 0, 1, 1) both;
+    pointer-events: none;
+    will-change: transform, opacity;
+  }
+  :global(.page-content.is-content-idle) { transform: none; opacity: 1; }
 
   @keyframes curtain-cover { from { clip-path: var(--clip-hidden-bottom); } to { clip-path: var(--clip-visible); } }
   @keyframes curtain-reveal { from { clip-path: var(--clip-visible); } to { clip-path: var(--clip-hidden-top); } }
   @keyframes mark-in { 0%,35% { opacity: 0; transform: translateY(8px); } 75%,100% { opacity: 1; transform: translateY(0); } }
+  @keyframes content-enter { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes content-leave { from { opacity: 1; transform: translateY(0); } to { opacity: .92; transform: translateY(-10px); } }
 
   @media (prefers-reduced-motion: reduce) {
     .page-transition,
     .page-transition__mark { visibility: hidden; animation: none; clip-path: var(--clip-hidden-top); }
+    :global(.page-content) { animation: none !important; transform: none !important; opacity: 1 !important; }
   }
 </style>
