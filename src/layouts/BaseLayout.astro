@@ -3,6 +3,7 @@ import '../styles/main.css';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import PageTransition from '../components/PageTransition.astro';
+import IntroAnimation from '../components/IntroAnimation.astro';
 
 interface Props {
   title?: string;
@@ -28,6 +29,7 @@ const {
     <title>{title}</title>
   </head>
   <body>
+    <IntroAnimation />
     <PageTransition />
     <a class="skip-link" href="#main-content">Skip to content</a>
     <Header />

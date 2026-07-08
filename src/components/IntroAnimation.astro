@@ -1,0 +1,73 @@
+<script>
+  import { gsap } from 'gsap';
+
+  const heading = document.querySelector<HTMLElement>('#main-content h1');
+  const intro = heading?.closest('header, section') ?? heading?.parentElement;
+  const paragraph = intro?.querySelector<HTMLElement>('p:not(.eyebrow)') ?? null;
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+  const targets = [heading, paragraph].filter((target): target is HTMLElement => Boolean(target));
+  let timeline: gsap.core.Timeline | null = null;
+  let hasPlayed = false;
+  let fallbackTimer = 0;
+
+  const revealImmediately = () => {
+    if (targets.length) gsap.set(targets, { clearProps: 'all' });
+  };
+
+  const animateIntro = () => {
+    if (!heading || reducedMotion.matches) {
+      revealImmediately();
+      return;
+    }
+
+    hasPlayed = true;
+    window.clearTimeout(fallbackTimer);
+    timeline?.kill();
+
+    timeline = gsap.timeline({ defaults: { ease: 'power3.out' } });
+    timeline.fromTo(
+      heading,
+      { autoAlpha: 0, y: 28 },
+      { autoAlpha: 1, y: 0, duration: 0.82, clearProps: 'transform,opacity,visibility' },
+    );
+
+    if (paragraph) {
+      timeline.fromTo(
+        paragraph,
+        { autoAlpha: 0, y: 16 },
+        { autoAlpha: 1, y: 0, duration: 0.62, clearProps: 'transform,opacity,visibility' },
+        0.14,
+      );
+    }
+  };
+
+  const onTransitionEntered = () => animateIntro();
+
+  const onMotionChange = () => {
+    if (!reducedMotion.matches) return;
+    timeline?.kill();
+    revealImmediately();
+  };
+
+  const cleanup = () => {
+    window.clearTimeout(fallbackTimer);
+    timeline?.kill();
+    window.removeEventListener('page-transition:entered', onTransitionEntered);
+    window.removeEventListener('pagehide', onPageHide);
+    reducedMotion.removeEventListener('change', onMotionChange);
+  };
+
+  const onPageHide = (event: PageTransitionEvent) => {
+    if (!event.persisted) cleanup();
+  };
+
+  if (heading && !reducedMotion.matches) {
+    gsap.set(targets, { autoAlpha: 0 });
+    window.addEventListener('page-transition:entered', onTransitionEntered);
+    window.addEventListener('pagehide', onPageHide);
+    reducedMotion.addEventListener('change', onMotionChange);
+    fallbackTimer = window.setTimeout(() => {
+      if (!hasPlayed) animateIntro();
+    }, 900);
+  }
+</script>

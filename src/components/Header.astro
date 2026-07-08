@@ -1,13 +1,172 @@
 ---
 const path = Astro.url.pathname;
 const links = [
-  { href: '/work', label: 'Work' }, { href: '/archive', label: 'Archive' },
-  { href: '/about', label: 'About' }, { href: '/contact', label: 'Contact' },
+  { href: '/work', label: 'Work' },
+  { href: '/about', label: 'Studio' },
+  { href: '/archive', label: 'Playground' },
+  { href: '/contact', label: 'Contact' },
 ];
 ---
-<header class="site-header">
-  <a class="wordmark" href="/" aria-label="Fieldwork home">FIELDWORK<span>®</span></a>
-  <nav class="main-nav" aria-label="Main navigation">
-    {links.map((link) => <a href={link.href} aria-current={path.startsWith(link.href) ? 'page' : undefined}>{link.label}</a>)}
+
+<header class="site-header" data-header>
+  <nav class="site-nav" aria-label="Primary navigation">
+    <div class="nav-bar">
+      <a class="brand" href="/" aria-label="Sandikala Studio home">
+        <span class="brand-mark" aria-hidden="true"></span>
+        <span>Sandikala Studio</span>
+      </a>
+      <button
+        class="menu-toggle"
+        type="button"
+        aria-expanded="false"
+        aria-controls="primary-menu"
+        aria-label="Open navigation menu"
+        data-menu-toggle
+      >
+        <span aria-hidden="true"></span>
+      </button>
+    </div>
+
+    <div class="menu-panel" id="primary-menu" aria-hidden="true" inert data-menu-panel>
+      <ol class="menu-list">
+        {links.map((link, index) => (
+          <li style={`--i: ${index}`}>
+            <a href={link.href} aria-current={path.startsWith(link.href) ? 'page' : undefined}>
+              <span>({index + 1})</span>{link.label}
+            </a>
+          </li>
+        ))}
+      </ol>
+    </div>
   </nav>
 </header>
+
+<script>
+  const header = document.querySelector<HTMLElement>('[data-header]');
+  const toggle = header?.querySelector<HTMLButtonElement>('[data-menu-toggle]');
+  const panel = header?.querySelector<HTMLElement>('[data-menu-panel]');
+
+  if (header && toggle && panel) {
+    let open = false;
+
+    const setOpen = (nextOpen: boolean) => {
+      open = nextOpen;
+      header.classList.toggle('is-open', open);
+      toggle.setAttribute('aria-expanded', String(open));
+      toggle.setAttribute('aria-label', open ? 'Close navigation menu' : 'Open navigation menu');
+      panel.setAttribute('aria-hidden', String(!open));
+      panel.inert = !open;
+    };
+
+    const onToggle = () => setOpen(!open);
+    const onPanelClick = (event: MouseEvent) => {
+      if ((event.target as Element).closest('a')) setOpen(false);
+    };
+    const onDocumentClick = (event: MouseEvent) => {
+      if (open && event.target instanceof Node && !header.contains(event.target)) setOpen(false);
+    };
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key !== 'Escape' || !open) return;
+      setOpen(false);
+      toggle.focus();
+    };
+    const cleanup = () => {
+      toggle.removeEventListener('click', onToggle);
+      panel.removeEventListener('click', onPanelClick);
+      document.removeEventListener('click', onDocumentClick);
+      document.removeEventListener('keydown', onKeyDown);
+      window.removeEventListener('pagehide', onPageHide);
+    };
+    const onPageHide = (event: PageTransitionEvent) => {
+      if (!event.persisted) cleanup();
+    };
+
+    toggle.addEventListener('click', onToggle);
+    panel.addEventListener('click', onPanelClick);
+    document.addEventListener('click', onDocumentClick);
+    document.addEventListener('keydown', onKeyDown);
+    window.addEventListener('pagehide', onPageHide);
+  }
+</script>
+
+<style>
+  .site-header {
+    --header-width: 25rem;
+    --panel-background: #11110f;
+    --menu-duration: 520ms;
+    --menu-easing: cubic-bezier(.77, 0, .18, 1);
+    --stagger-delay: 55ms;
+    position: fixed;
+    top: 1rem;
+    left: 50%;
+    z-index: 8000;
+    width: calc(100% - 2rem);
+    max-width: var(--header-width);
+    color: #f2f0ea;
+    transform: translateX(-50%);
+  }
+  .site-nav { position: relative; }
+  .nav-bar {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    min-height: 3.25rem;
+    align-items: center;
+    justify-content: space-between;
+    padding: .7rem .8rem .7rem 1rem;
+    background: var(--panel-background);
+  }
+  .brand { display: inline-flex; align-items: center; gap: .65rem; font-size: .77rem; font-weight: 500; letter-spacing: -.02em; }
+  .brand-mark { position: relative; width: .72rem; height: .72rem; transform: rotate(45deg); }
+  .brand-mark::before,
+  .brand-mark::after { position: absolute; content: ''; background: currentColor; }
+  .brand-mark::before { top: 0; bottom: 0; left: calc(50% - .5px); width: 1px; }
+  .brand-mark::after { top: calc(50% - .5px); right: 0; left: 0; height: 1px; }
+  .menu-toggle { display: grid; width: 2rem; height: 2rem; padding: 0; place-items: center; color: inherit; background: transparent; border: 0; cursor: pointer; }
+  .menu-toggle > span { position: relative; display: block; width: .85rem; height: .85rem; transition: transform 360ms var(--menu-easing); }
+  .menu-toggle > span::before,
+  .menu-toggle > span::after { position: absolute; content: ''; background: currentColor; }
+  .menu-toggle > span::before { top: calc(50% - .5px); right: 0; left: 0; height: 1px; }
+  .menu-toggle > span::after { top: 0; bottom: 0; left: calc(50% - .5px); width: 1px; }
+  .menu-toggle:focus-visible { outline: 1px solid currentColor; outline-offset: 2px; }
+  .is-open .menu-toggle > span { transform: rotate(45deg); }
+  .menu-panel {
+    position: absolute;
+    top: calc(100% - 1px);
+    left: 0;
+    width: 100%;
+    padding: 1.15rem 1rem 1.35rem;
+    visibility: hidden;
+    background: var(--panel-background);
+    clip-path: inset(0 0 100% 0);
+    pointer-events: none;
+    transition: clip-path var(--menu-duration) var(--menu-easing), visibility 0s linear var(--menu-duration);
+    will-change: clip-path;
+  }
+  .is-open .menu-panel { visibility: visible; clip-path: inset(0 0 0 0); pointer-events: auto; transition-delay: 0s; }
+  .menu-list { display: flex; margin: 0; padding: .5rem 0 0; flex-direction: column; list-style: none; }
+  .menu-list li {
+    opacity: 0;
+    transform: translateY(.75rem);
+    transition: opacity 220ms ease, transform 300ms var(--menu-easing);
+    transition-delay: calc((3 - var(--i)) * 30ms);
+  }
+  .is-open .menu-list li {
+    opacity: 1;
+    transform: translateY(0);
+    transition-duration: 380ms, 460ms;
+    transition-delay: calc(150ms + var(--i) * var(--stagger-delay));
+  }
+  .menu-list a { display: grid; grid-template-columns: 2.2rem 1fr; align-items: baseline; padding: .08rem 0; font-family: var(--serif); font-size: clamp(2.65rem, 12vw, 4.15rem); line-height: .98; letter-spacing: -.045em; }
+  .menu-list a > span { font-family: var(--sans); font-size: .55rem; letter-spacing: 0; opacity: .55; }
+  .menu-list a::after { content: ''; grid-column: 2; width: 100%; height: 1px; background: currentColor; transform: scaleX(0); transform-origin: right; transition: transform 300ms ease; }
+  .menu-list a:hover::after,
+  .menu-list a:focus-visible::after,
+  .menu-list a[aria-current='page']::after { transform: scaleX(1); transform-origin: left; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .menu-panel { transition-duration: 1ms; }
+    .menu-toggle > span,
+    .menu-list li { transition-duration: 1ms; transition-delay: 0ms; }
+  }
+</style>

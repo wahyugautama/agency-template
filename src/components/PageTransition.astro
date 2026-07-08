@@ -23,6 +23,12 @@
       content.classList.add(state);
     };
 
+    const finishEntry = () => {
+      setState('is-idle');
+      setContentState('is-content-idle');
+      window.dispatchEvent(new CustomEvent('page-transition:entered'));
+    };
+
     const waitForAnimation = () => new Promise<void>((resolve) => {
       let settled = false;
       const finish = () => {
@@ -47,8 +53,7 @@
       setState('is-entering');
       setContentState('is-content-entering');
       await waitForAnimation();
-      setState('is-idle');
-      setContentState('is-content-idle');
+      finishEntry();
     };
 
     const isEligibleLink = (event: MouseEvent, link: HTMLAnchorElement) => {
@@ -88,8 +93,7 @@
       if (!event.persisted || reducedMotion.matches) return;
       navigating = false;
       playEntry().catch(() => {
-        setState('is-idle');
-        setContentState('is-content-idle');
+        finishEntry();
       });
     };
 
@@ -105,19 +109,16 @@
     };
 
     if (reducedMotion.matches) {
-      setState('is-idle');
-      setContentState('is-content-idle');
+      finishEntry();
     } else {
       setContentState('is-content-entering');
       document.addEventListener('click', onClick);
       window.addEventListener('pageshow', onPageShow);
       window.addEventListener('pagehide', onPageHide);
       waitForAnimation().then(() => {
-        setState('is-idle');
-        setContentState('is-content-idle');
+        finishEntry();
       }).catch(() => {
-        setState('is-idle');
-        setContentState('is-content-idle');
+        finishEntry();
       });
     }
   }
