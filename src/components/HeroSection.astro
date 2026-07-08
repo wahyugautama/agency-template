@@ -1,0 +1,14 @@
+---
+import CTAButton from './CTAButton.astro';
+interface Props { eyebrow?: string; title: string; copy: string; image?: string; imageAlt?: string; primary?: { href: string; label: string }; secondary?: { href: string; label: string }; }
+const { eyebrow, title, copy, image, imageAlt = '', primary, secondary } = Astro.props;
+---
+<header class:list={['hotel-hero', { 'hotel-hero--image': image }]}>
+  {image && <img src={image} alt={imageAlt} fetchpriority="high" />}
+  <div class="hotel-hero__content page-shell">
+    {eyebrow && <p class="eyebrow">{eyebrow}</p>}
+    <h1>{title}</h1><p class="hotel-hero__copy">{copy}</p>
+    {(primary || secondary) && <div class="button-row">{primary && <CTAButton {...primary} />}{secondary && <CTAButton {...secondary} variant="secondary" />}</div>}
+  </div>
+</header>
+

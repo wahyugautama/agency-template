@@ -1,0 +1,9 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro'; import HeroSection from '../components/HeroSection.astro'; import SectionIntro from '../components/SectionIntro.astro'; import FinalCTA from '../components/FinalCTA.astro'; import { imagery } from '../data/hotel';
+---
+<BaseLayout title="Location — Campbell House Penang" description="Stay in the heart of George Town, Penang at Campbell House.">
+  <HeroSection eyebrow="George Town · Penang" title="At the centre of a city made for walking" copy="From Campbell House, heritage streets, cafés, restaurants, culture, and the everyday life of George Town are close at hand." image={imagery.town} imageAlt="A characterful George Town streetscape" />
+  <section class="split-section page-shell section-pad"><SectionIntro eyebrow="Step outside" title="Explore without overplanning" copy="Follow the streets at your own pace: pause for coffee, find a dining room, notice old façades, and let one turn lead to the next. Campbell House makes a natural base for a closer experience of George Town." /><div class="feature-list feature-list--stack"><article><h3>Heritage streets</h3><p>Architecture, textures, and living history within easy reach.</p></article><article><h3>Food and cafés</h3><p>George Town’s dining culture is part of each day’s route.</p></article><article><h3>Culture nearby</h3><p>Discover local landmarks and creative places on foot.</p></article></div></section>
+  <FinalCTA />
+</BaseLayout>
+

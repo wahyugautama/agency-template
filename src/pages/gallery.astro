@@ -1,0 +1,11 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro'; import HeroSection from '../components/HeroSection.astro'; import FinalCTA from '../components/FinalCTA.astro'; import { imagery } from '../data/hotel';
+const groups = [{ label: 'Rooms', src: imagery.room, alt: 'Boutique room interior' }, { label: 'Dining', src: imagery.dining, alt: 'Intimate restaurant interior' }, { label: 'Heritage details', src: imagery.heritage, alt: 'Warm heritage interior detail' }, { label: 'George Town', src: imagery.town, alt: 'George Town streetscape' }];
+---
+<BaseLayout title="Gallery — Campbell House Penang" description="Step inside the rooms, dining spaces and heritage character of Campbell House Penang.">
+  <HeroSection eyebrow="A look inside" title="The character of Campbell House" copy="Step inside Campbell House and discover the textures, details, rooms, and dining spaces that shape the experience." />
+  <section class="gallery-grid page-shell section-pad">{groups.map((item) => <figure><img src={item.src} alt={item.alt} loading="lazy" /><figcaption>{item.label}</figcaption></figure>)}</section>
+  <!-- TODO: Replace editorial stock imagery with approved Campbell House photography. -->
+  <FinalCTA />
+</BaseLayout>
+

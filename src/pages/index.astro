@@ -1,24 +1,23 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import ProjectCard from '../components/ProjectCard.astro';
-import SectionHeader from '../components/SectionHeader.astro';
-import CTA from '../components/CTA.astro';
-import { projects } from '../data/projects';
-const featured = projects.filter((project) => project.featured).slice(0, 4);
+import HeroSection from '../components/HeroSection.astro';
+import TrustBar from '../components/TrustBar.astro';
+import SectionIntro from '../components/SectionIntro.astro';
+import RoomCard from '../components/RoomCard.astro';
+import CTAButton from '../components/CTAButton.astro';
+import FinalCTA from '../components/FinalCTA.astro';
+import { siteConfig } from '../config/site';
+import { imagery } from '../data/hotel';
 ---
 <BaseLayout>
-  <section class="home-hero page-shell">
-    <p class="eyebrow">Independent creative studio · Kuala Lumpur</p>
-    <h1>We make brands<br />matter <em>more.</em></h1>
-    <div class="hero-foot"><p>Strategy, identity, and digital experiences for ambitious organizations shaping what comes next.</p><a class="arrow-link" href="/work">Explore our work <span aria-hidden="true">↓</span></a></div>
-  </section>
-  <section class="featured page-shell section-pad">
-    <SectionHeader eyebrow="Selected work · 2023—25" title="Ideas made visible." linkHref="/work" linkLabel="View all work" />
-    <div class="featured-grid">{featured.map((project, index) => <ProjectCard project={project} priority={index < 2} />)}</div>
-  </section>
-  <section class="services-band section-pad">
-    <div class="page-shell services-grid"><p class="eyebrow">What we do</p><h2>From first thought<br />to final form.</h2><div class="service-list"><p><span>01</span>Strategy & positioning</p><p><span>02</span>Brand identity</p><p><span>03</span>Digital experiences</p><p><span>04</span>Campaigns & content</p></div></div>
-  </section>
-  <section class="about-teaser page-shell section-pad"><p class="eyebrow">About us</p><div><h2>Small by design.<br />Broad in perspective.</h2><p>We are an independent team of strategists, designers, and makers. We partner closely with people who care about their impact—and believe the best work comes from clarity, curiosity, and trust.</p><a class="text-link" href="/about">Meet the studio <span aria-hidden="true">↗</span></a></div></section>
-  <CTA />
+  <HeroSection eyebrow="Campbell House · George Town, Penang" title="Heritage boutique stay in the heart of George Town" copy="Stay at Campbell House, an intimate boutique hotel with individually designed rooms, warm personal service, and Italian dining at IL BÁCARO." image={imagery.hero} imageAlt="Warm heritage-inspired interior at Campbell House" primary={{ href: siteConfig.bookingUrl, label: 'Check Availability' }} secondary={{ href: '/rooms', label: 'Explore Rooms' }} />
+  <TrustBar />
+  <section class="split-section page-shell section-pad"><SectionIntro eyebrow="Welcome to Campbell House" title="A George Town stay with a personal rhythm" copy="Behind its heritage character, Campbell House offers the ease of an intimate hotel: rooms with individual personality, thoughtful hospitality, and a team close at hand. Step outside into George Town; return to a place that feels considered, calm, and distinctly its own." /><img src={imagery.heritage} alt="Heritage interior details" loading="lazy" /></section>
+  <section class="page-shell section-pad"><div class="heading-row"><SectionIntro eyebrow="Stay your way" title="Rooms with their own point of view" copy="No two stays need feel the same. Explore rooms designed around character, comfort, and a sense of place." /><CTAButton href="/rooms" label="Explore Rooms" variant="text" /></div><div class="cards-grid"><RoomCard overview /></div></section>
+  <section class="booking-band section-pad"><div class="page-shell"><SectionIntro eyebrow="Book direct" title="A simpler way to plan your stay" copy="Speak directly with Campbell House for the clearest reservation journey, current seasonal promotions, and guidance from the people who know the hotel best." /><ul><li>Personal reservation support</li><li>Current guest perks, when available</li><li>Seasonal offers in one place</li></ul><CTAButton href={siteConfig.bookingUrl} label="Check Availability" /></div></section>
+  <section class="split-section split-section--reverse page-shell section-pad"><img src={imagery.dining} alt="An intimate restaurant dining room" loading="lazy" /><div><SectionIntro eyebrow="IL BÁCARO" title="Italian dining, part of the house" copy="IL BÁCARO brings thoughtful Italian cooking and easy hospitality into the Campbell House experience. Settle in for an intimate meal, whether you are staying upstairs or joining us from elsewhere in George Town." /><div class="button-row"><CTAButton href="/restaurant" label="View Restaurant" /><CTAButton href={siteConfig.restaurantReservationUrl} label="Reserve a Table" variant="secondary" /></div></div></section>
+  <section class="location-teaser page-shell section-pad"><p class="eyebrow">In the neighbourhood</p><h2>George Town begins at the door</h2><p>Walk out into heritage streets, independent cafés, dining rooms, and layers of local culture. Campbell House is a comfortable base for unhurried exploring—and an inviting place to return to.</p><CTAButton href="/location" label="Explore the Location" variant="text" /></section>
+  <section class="recognition page-shell section-pad"><SectionIntro eyebrow="Guest recognition" title="A stay people remember for the right reasons" copy="Personal service, individual rooms, and a location made for discovering George Town sit at the heart of the Campbell House experience." /><div class="recognition-placeholder"><p>Verified guest quotes, review highlights, and awards will appear here.</p><!-- TODO: Add verified recognition only. --></div></section>
+  <FinalCTA label="Check Availability" />
 </BaseLayout>
+

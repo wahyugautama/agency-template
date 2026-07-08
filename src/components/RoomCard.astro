@@ -1,0 +1,14 @@
+---
+import type { Room } from '../data/hotel';
+import CTAButton from './CTAButton.astro';
+interface Props { room?: Room; overview?: boolean; }
+const { room, overview = false } = Astro.props;
+---
+<article class="room-card">
+  <img src={room?.image ?? 'https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?auto=format&fit=crop&w=1600&q=85'} alt={room?.imageAlt ?? 'Warm, characterful boutique hotel room'} loading="lazy" />
+  <div class="room-card__body"><p class="eyebrow">{room?.bestFor ?? 'Every stay is individual'}</p><h3>{room?.name ?? 'Rooms at Campbell House'}</h3><p>{room?.description ?? 'Discover individually designed rooms shaped by heritage character, thoughtful comfort, and the personal scale of a boutique stay.'}</p>
+    {room && <ul class="quick-facts">{room.size && <li>{room.size}</li>}{room.bed && <li>{room.bed}</li>}{room.floor && <li>{room.floor}</li>}{room.feature && <li>{room.feature}</li>}</ul>}
+    <CTAButton href={room ? `/rooms/${room.slug}` : '/rooms'} label={overview ? 'Explore Rooms' : 'View Room'} variant="text" />
+  </div>
+</article>
+

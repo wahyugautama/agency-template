@@ -1,0 +1,16 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import HeroSection from '../../components/HeroSection.astro';
+import RoomCard from '../../components/RoomCard.astro';
+import FinalCTA from '../../components/FinalCTA.astro';
+import { rooms } from '../../data/hotel';
+---
+<BaseLayout title="Rooms — Campbell House Penang" description="Explore individually designed rooms at Campbell House in George Town, Penang.">
+  <HeroSection eyebrow="Rooms at Campbell House" title="Rooms with character, comfort, and a sense of place" copy="Each room at Campbell House has its own personality, combining heritage details, thoughtful comforts, and warm boutique hospitality." />
+  <section class="page-shell section-pad"><div class="section-intro"><p class="eyebrow">Compare rooms</p><h2>Find the room that fits your stay</h2><p>Verified room specifications are being prepared. Contact the Campbell House team for current room guidance and availability.</p></div>
+    {rooms.length ? <div class="table-wrap"><table><thead><tr><th>Room</th><th>Size</th><th>Bed</th><th>Floor</th><th>Best for</th><th>Key feature</th><th></th></tr></thead><tbody>{rooms.map((room) => <tr><th>{room.name}</th><td>{room.size ?? '—'}</td><td>{room.bed ?? '—'}</td><td>{room.floor ?? '—'}</td><td>{room.bestFor ?? '—'}</td><td>{room.feature ?? '—'}</td><td><a href={`/rooms/${room.slug}`}>View Room</a></td></tr>)}</tbody></table></div> : <div class="content-notice"><strong>Room guide coming soon</strong><p>Room names, sizes, bed types, floors, and individual features require verified hotel data.</p></div>}
+  </section>
+  <section class="page-shell section-pad"><div class="cards-grid">{rooms.length ? rooms.map((room) => <RoomCard room={room} />) : <RoomCard overview />}</div></section>
+  <FinalCTA title="Need help choosing a room?" copy="Tell us how you like to travel and the Campbell House team can guide your stay." />
+</BaseLayout>
+

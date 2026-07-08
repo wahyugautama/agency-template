@@ -1,19 +1,4 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro';
-import CTA from '../components/CTA.astro';
-const team = [
-  { name: 'Maya Rahman', role: 'Creative Director', image: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=1000&q=85' },
-  { name: 'Leo Tan', role: 'Strategy Director', image: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=1000&q=85' },
-  { name: 'Amira Noor', role: 'Design Director', image: 'https://images.unsplash.com/photo-1531123897727-8f129e1688ce?auto=format&fit=crop&w=1000&q=85' },
-  { name: 'Jon Bell', role: 'Digital Director', image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=1000&q=85' },
-];
+return Astro.redirect('/location', 301);
 ---
-<BaseLayout title="About — Fieldwork">
-  <header class="page-intro page-shell"><p class="eyebrow">Studio profile</p><h1>Independent<br />by <em>nature.</em></h1><p>Fieldwork is a creative studio helping ambitious organizations find clarity, build relevance, and make a lasting mark.</p></header>
-  <figure class="about-image"><img src="https://images.unsplash.com/photo-1524758631624-e2822e304c36?auto=format&fit=crop&w=2000&q=85" alt="Creative team collaborating around a studio table" /></figure>
-  <section class="story page-shell section-pad"><p class="eyebrow">Our story</p><div><h2>Built for close collaboration.</h2><p>We founded Fieldwork in 2018 with a simple conviction: the strongest ideas emerge when strategy and design share the same table. Today, our independent team works across disciplines and borders, bringing focus and feeling to complex challenges.</p><p>We stay intentionally small, assembling the right mix of minds around every brief. No layers, no hand-offs—just direct partnership from the first conversation through the final detail.</p></div></section>
-  <section class="values page-shell section-pad"><p class="eyebrow">What guides us</p><div class="values-grid"><article><span>01</span><h3>Clarity over noise</h3><p>We simplify without flattening, finding the idea that makes everything else click.</p></article><article><span>02</span><h3>Make it felt</h3><p>Good work communicates. Great work creates a response people remember.</p></article><article><span>03</span><h3>Stay curious</h3><p>We ask better questions, challenge assumptions, and keep the process open.</p></article></div></section>
-  <section class="team page-shell section-pad"><div class="section-header"><div><p class="eyebrow">Core team</p><h2>Small team,<br />shared standard.</h2></div></div><div class="team-grid">{team.map((person) => <article><img src={person.image} alt={`${person.name}, ${person.role}`} loading="lazy" /><h3>{person.name}</h3><p>{person.role}</p></article>)}</div></section>
-  <section class="process section-pad"><div class="page-shell"><p class="eyebrow">How we work</p><h2>Listen. Define.<br />Make. Refine.</h2><ol><li><span>01</span><div><h3>Listen closely</h3><p>We immerse in your world, your audience, and the tension worth solving.</p></div></li><li><span>02</span><div><h3>Find the idea</h3><p>We turn insight into a clear strategic and creative point of view.</p></div></li><li><span>03</span><div><h3>Build the system</h3><p>We shape the identity and experiences that bring the idea to life.</p></div></li><li><span>04</span><div><h3>Make it work</h3><p>We refine, launch, and equip your team to carry the work forward.</p></div></li></ol></div></section>
-  <CTA />
-</BaseLayout>
+

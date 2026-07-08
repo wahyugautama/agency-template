@@ -1,0 +1,7 @@
+---
+import CTAButton from './CTAButton.astro';
+import { siteConfig } from '../config/site';
+interface Props { title?: string; copy?: string; label?: string; href?: string; }
+const { title = 'Ready to stay in George Town?', copy = 'Choose a room with character and let our team help shape your stay.', label = 'Plan Your Stay', href = siteConfig.bookingUrl } = Astro.props;
+---
+<section class="final-cta page-shell"><p class="eyebrow">Campbell House Penang</p><h2>{title}</h2><p>{copy}</p><CTAButton href={href} label={label} /></section>

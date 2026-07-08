@@ -1,0 +1,9 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro'; import HeroSection from '../components/HeroSection.astro'; import CTAButton from '../components/CTAButton.astro'; import FinalCTA from '../components/FinalCTA.astro'; import { siteConfig } from '../config/site';
+---
+<BaseLayout title="Offers — Campbell House Penang" description="Explore current stay offers from Campbell House Penang.">
+  <HeroSection eyebrow="Stay offers" title="Offers for a more rewarding stay" copy="Discover current reasons to plan a little more time at Campbell House, always presented with clear details and a direct path to booking." />
+  <section class="page-shell section-pad"><div class="content-notice"><strong>Current offers are being prepared</strong><p>The source content did not include verified active promotions. Contact us directly for current seasonal offers and guest perks.</p><CTAButton href={siteConfig.bookingUrl} label="Check Availability" /></div><!-- TODO: Add verified offer title, benefits, validity, terms and booking link. --></section>
+  <section class="narrow-section page-shell section-pad"><h2>Book direct, with clarity</h2><p>Booking directly connects you with the Campbell House team for current availability, relevant promotions, and a smoother reservation experience.</p></section>
+  <FinalCTA />
+</BaseLayout>

@@ -1,5 +1,5 @@
 <div class="page-transition is-entering" aria-hidden="true">
-  <span class="page-transition__mark">FIELDWORK<sup>®</sup></span>
+  <span class="page-transition__mark">CAMPBELL HOUSE</span>
 </div>
 
 <script>
@@ -7,6 +7,28 @@
   const content = document.querySelector<HTMLElement>('#main-content');
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
   const FALLBACK_DELAY = 680;
+  const RESET_SCROLL_KEY = 'page-transition:reset-scroll';
+
+  const resetScrollAfterNavigation = () => {
+    try {
+      if (sessionStorage.getItem(RESET_SCROLL_KEY) !== 'true') return;
+      sessionStorage.removeItem(RESET_SCROLL_KEY);
+    } catch {
+      return;
+    }
+
+    // The global stylesheet enables smooth scrolling, so temporarily disable it
+    // to ensure the new page starts at the top before it becomes visible.
+    const scrollBehavior = document.documentElement.style.scrollBehavior;
+    document.documentElement.style.scrollBehavior = 'auto';
+    window.scrollTo(0, 0);
+    requestAnimationFrame(() => {
+      window.scrollTo(0, 0);
+      document.documentElement.style.scrollBehavior = scrollBehavior;
+    });
+  };
+
+  resetScrollAfterNavigation();
 
   if (overlay) {
     let navigating = false;
@@ -79,6 +101,12 @@
       const destination = link.href;
 
       try {
+        sessionStorage.setItem(RESET_SCROLL_KEY, 'true');
+      } catch {
+        // Navigation still works when storage is unavailable.
+      }
+
+      try {
         setState('is-leaving');
         setContentState('is-content-leaving');
         await waitForAnimation();
@@ -129,7 +157,7 @@
     --transition-duration: 560ms;
     --transition-entry-duration: 500ms;
     --transition-easing: cubic-bezier(.77, 0, .18, 1);
-    --transition-color: #d9ff43;
+    --transition-color: #b8472e;
     --clip-hidden-top: inset(0 0 100% 0);
     --clip-visible: inset(0 0 0 0);
     --clip-hidden-bottom: inset(100% 0 0 0);
@@ -139,7 +167,7 @@
     display: grid;
     place-items: center;
     overflow: hidden;
-    color: #171714;
+    color: #fffaf0;
     background: var(--transition-color);
     pointer-events: none;
     will-change: clip-path;

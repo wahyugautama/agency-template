@@ -1,9 +1,4 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro';
-import { projects } from '../data/projects';
-const archive = projects.flatMap((project) => [project.coverImage, ...project.galleryImages].map((image) => ({ ...image, project })));
+return Astro.redirect('/gallery', 301);
 ---
-<BaseLayout title="Archive — Fieldwork" description="A visual archive of Fieldwork Studio projects.">
-  <header class="archive-intro page-shell"><p class="eyebrow">Visual archive · {archive.length} images</p><h1>Fragments,<br /><em>process, outcomes.</em></h1></header>
-  <section class="archive-grid page-shell" aria-label="Project image archive">{archive.map((item) => <a class="archive-item" href={`/work/${item.project.slug}`}><img src={item.src} alt={item.alt} loading="lazy" /><span><strong>{item.project.title}</strong><small>{item.project.year}</small></span></a>)}</section>
-</BaseLayout>
+

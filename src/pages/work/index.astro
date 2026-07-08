@@ -1,9 +1,4 @@
 ---
-import BaseLayout from '../../layouts/BaseLayout.astro';
-import ProjectCard from '../../components/ProjectCard.astro';
-import { projects } from '../../data/projects';
+return Astro.redirect('/rooms', 301);
 ---
-<BaseLayout title="Work — Fieldwork" description="Selected brand, campaign, and digital work from Fieldwork Studio.">
-  <header class="page-intro page-shell"><p class="eyebrow">Selected work · 2023—25</p><h1>Work with<br /><em>weight.</em></h1><p>We partner with ambitious people to build brands and experiences that move through culture and endure over time.</p></header>
-  <section class="work-grid page-shell" aria-label="Projects">{projects.map((project, index) => <ProjectCard project={project} priority={index < 2} />)}</section>
-</BaseLayout>
+
